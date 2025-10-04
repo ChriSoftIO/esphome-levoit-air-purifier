@@ -504,8 +504,8 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
   }
 }
 
-void Levoit::set_request_state(uint32_t onMask, uint32_t offMask, bool aquireMutex) {
-    if (aquireMutex && xSemaphoreTake(stateChangeMutex_, portMAX_DELAY) == pdTRUE) {
+void Levoit::set_request_state(uint32_t onMask, uint32_t offMask, bool acquireMutex) {
+    if (acquireMutex && xSemaphoreTake(stateChangeMutex_, portMAX_DELAY) == pdTRUE) {
       if (onMask & offMask) {
         ESP_LOGE(TAG, "set_request_state - tried to set same bit on and off");
         return;
@@ -529,7 +529,7 @@ void Levoit::set_request_state(uint32_t onMask, uint32_t offMask, bool aquireMut
 
       ESP_LOGV(TAG, "set_request_state - Current State: %u, Requested On: %u, Request Off: %u", current_state_, req_on_state_, req_off_state_);
 
-      if (aquireMutex)
+      if (acquireMutex)
         xSemaphoreGive(stateChangeMutex_);
 
       xTaskNotifyGive(maintTaskHandle_);
