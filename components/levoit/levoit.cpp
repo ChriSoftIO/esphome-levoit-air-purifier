@@ -504,36 +504,48 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
   }
 }
 
+/// @brief Request state changes for the device
+/// @param onMask Bits to turn on
+/// @param offMask Bits to turn off
+/// @param acquireMutex Set to false ONLY if caller already holds stateChangeMutex_
 void Levoit::set_request_state(uint32_t onMask, uint32_t offMask, bool acquireMutex) {
-    if (acquireMutex && xSemaphoreTake(stateChangeMutex_, portMAX_DELAY) == pdTRUE) {
-      if (onMask & offMask) {
-        ESP_LOGE(TAG, "set_request_state - tried to set same bit on and off");
-        return;
-      }
-
-      // Filter out bits in onMask that are already on in current_state_
-      onMask &= ~current_state_;
-
-      // Filter out bits in offMask that are already off in current_state_
-      offMask &= current_state_;
-
-      if (onMask > 0) {
-        req_on_state_ |= onMask;
-        req_off_state_ &= ~onMask;
-      }
-
-      if (offMask > 0) {
-        req_off_state_ |= offMask;
-        req_on_state_ &= ~offMask;
-      }
-
-      ESP_LOGV(TAG, "set_request_state - Current State: %u, Requested On: %u, Request Off: %u", current_state_, req_on_state_, req_off_state_);
-
-      if (acquireMutex)
-        xSemaphoreGive(stateChangeMutex_);
-
-      xTaskNotifyGive(maintTaskHandle_);
+  bool gotMutex = false;
+  if (acquireMutex) {
+    if (xSemaphoreTake(stateChangeMutex_, portMAX_DELAY) != pdTRUE) {
+      ESP_LOGE(TAG, "Failed to take stateChangeMutex_");
+      return;
     }
+    gotMutex = true;
+  }
+
+  if ((onMask & offMask) != 0) {
+    ESP_LOGE(TAG, "set_request_state - tried to set same bit on and off");
+    if (gotMutex)
+      xSemaphoreGive(stateChangeMutex_);
+    return;
+  }
+
+  // Filter out bits in onMask that are already on in current_state_
+  onMask &= ~current_state_;
+  // Filter out bits in offMask that are already off in current_state_
+  offMask &= current_state_;
+
+  if (onMask) {
+    req_on_state_ |= onMask;
+    req_off_state_ &= ~onMask;
+  }
+  if (offMask) {
+    req_off_state_ |= offMask;
+    req_on_state_ &= ~offMask;
+  }
+
+  ESP_LOGV(TAG, "set_request_state - Current State: %u, Requested On: %u, Request Off: %u", current_state_,
+           req_on_state_, req_off_state_);
+
+  if (gotMutex)
+    xSemaphoreGive(stateChangeMutex_);
+
+  xTaskNotifyGive(maintTaskHandle_);
 }
 
 void Levoit::set_bit_(uint32_t &state, bool condition, LevoitState bit) {
