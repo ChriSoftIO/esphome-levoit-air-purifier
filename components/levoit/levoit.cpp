@@ -48,6 +48,15 @@ void Levoit::setup() {
       [](void *param) { static_cast<Levoit *>(param)->maint_task_(); },
       "MaintTask", 4096, this, 1, &maintTaskHandle_, tskNO_AFFINITY);
 
+  // Request initial device state after a short delay
+  this->set_timeout(2000, [this]() {
+    ESP_LOGI(TAG, "Requesting initial device state");
+    this->send_command_(LevoitCommand {
+      .payloadType = LevoitPayloadType::STATUS_REQUEST,
+      .packetType = LevoitPacketType::SEND_MESSAGE,
+      .payload = {0x00}
+    });
+  });
 }
 
 void Levoit::maint_task_() {
