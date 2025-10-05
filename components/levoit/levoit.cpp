@@ -47,16 +47,6 @@ void Levoit::setup() {
   xTaskCreatePinnedToCore(
       [](void *param) { static_cast<Levoit *>(param)->maint_task_(); },
       "MaintTask", 4096, this, 1, &maintTaskHandle_, tskNO_AFFINITY);
-
-  // Request initial device state after a short delay
-  this->set_timeout(2000, [this]() {
-    ESP_LOGI(TAG, "Requesting initial device state");
-    this->send_command_(LevoitCommand {
-      .payloadType = LevoitPayloadType::STATUS_REQUEST,
-      .packetType = LevoitPacketType::SEND_MESSAGE,
-      .payload = {0x00}
-    });
-  });
 }
 
 void Levoit::maint_task_() {
@@ -90,8 +80,8 @@ void Levoit::maint_task_() {
         ESP_LOGV(TAG, "State Changed from %u to %u", previousState, current_state_);
 
         uint32_t wifiLights = 
-          static_cast<uint32_t>(LevoitState::WIFI_LIGHT_SOLID) +
-          static_cast<uint32_t>(LevoitState::WIFI_LIGHT_FLASH) +
+          static_cast<uint32_t>(LevoitState::WIFI_LIGHT_SOLID) |
+          static_cast<uint32_t>(LevoitState::WIFI_LIGHT_FLASH) |
           static_cast<uint32_t>(LevoitState::WIFI_LIGHT_OFF);
 
         // check if lights need to be changed
@@ -202,7 +192,7 @@ void Levoit::command_sync_() {
       });          
 
     // fan speed
-    if (req_on_state_ && fanChangeMask && (current_state_ && static_cast<uint32_t>(LevoitState::POWER) || current_state_ && static_cast<uint32_t>(LevoitState::FAN_MANUAL)))  {
+    if ((req_on_state_ & fanChangeMask) && ((current_state_ & static_cast<uint32_t>(LevoitState::POWER)) || (current_state_ & static_cast<uint32_t>(LevoitState::FAN_MANUAL)))) {
       if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED1)) {
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
