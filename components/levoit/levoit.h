@@ -104,7 +104,7 @@ class Levoit : public Component, public uart::UARTDevice {
   void set_command_timeout(int timeout);
   void set_status_poll_seconds(int interval);
   void register_state_listener(uint32_t changeMask, const std::function<void(uint32_t currentBits)> &func);
-  void set_request_state(uint32_t onMask, uint32_t offMask, bool aquireMutex = true);
+  void set_request_state(uint32_t onMask, uint32_t offMask, bool acquireMutex = true);
   uint32_t get_model_specific_payload_type(LevoitPayloadType type);
   uint32_t fanChangeMask =
     static_cast<uint32_t>(LevoitState::FAN_SPEED1) |

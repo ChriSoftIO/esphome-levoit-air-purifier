@@ -49,7 +49,7 @@ void LevoitSelect::setup() {
           else if (currentBits & static_cast<uint32_t>(LevoitState::AUTO_QUIET))
             this->publish_state("Quiet");
           else if (currentBits & static_cast<uint32_t>(LevoitState::AUTO_EFFICIENT))
-            this->publish_state("Effecient");
+            this->publish_state("Efficient");
         }
       );
       break;

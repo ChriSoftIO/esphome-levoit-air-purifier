@@ -19,7 +19,7 @@ void LevoitSensor::setup() {
       break;
     case LevoitSensorPurpose::PM25:
       this->parent_->register_state_listener(
-        static_cast<uint32_t>(LevoitState::PM25_CHANGE) +
+        static_cast<uint32_t>(LevoitState::PM25_CHANGE) |
         static_cast<uint32_t>(LevoitState::PM25_NAN),
         [this](uint32_t currentBits) {
           if (currentBits & static_cast<uint32_t>(LevoitState::PM25_NAN)) {
