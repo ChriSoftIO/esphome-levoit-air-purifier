@@ -103,10 +103,10 @@ class Levoit : public Component, public uart::UARTDevice {
   void set_request_state(uint32_t onMask, uint32_t offMask, bool aquireMutex = true);
   uint32_t get_model_specific_payload_type(LevoitPayloadType type);
   uint32_t fanChangeMask =
-    static_cast<uint32_t>(LevoitState::FAN_SPEED1) +
-    static_cast<uint32_t>(LevoitState::FAN_SPEED2) +
-    static_cast<uint32_t>(LevoitState::FAN_SPEED3) +
-    static_cast<uint32_t>(LevoitState::FAN_SPEED4) +
+    static_cast<uint32_t>(LevoitState::FAN_SPEED1) |
+    static_cast<uint32_t>(LevoitState::FAN_SPEED2) |
+    static_cast<uint32_t>(LevoitState::FAN_SPEED3) |
+    static_cast<uint32_t>(LevoitState::FAN_SPEED4) |
     static_cast<uint32_t>(LevoitState::FAN_SLEEP);
   uint32_t pm25_value = 1000;
   uint8_t air_quality = 255;
