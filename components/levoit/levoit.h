@@ -66,11 +66,15 @@ struct LevoitStateListener {
   std::function<void(uint32_t currentBits)> func;
 };
 
-typedef struct LevoitCommand {
+#define MAX_PAYLOAD_SIZE 32
+struct LevoitCommand {
   LevoitPayloadType payloadType;
   LevoitPacketType packetType;
-  std::vector<uint8_t> payload;
-} LevoitPacket;
+  uint8_t payload[MAX_PAYLOAD_SIZE] = {0};
+  uint8_t payload_len = 0;
+};
+static_assert(std::is_trivially_copyable<LevoitCommand>::value,
+              "LevoitCommand must be trivially copyable for FreeRTOS queue");
 
 using PayloadTypeOverrideMap = std::unordered_map<LevoitDeviceModel, std::unordered_map<LevoitPayloadType, uint32_t>>;
 
