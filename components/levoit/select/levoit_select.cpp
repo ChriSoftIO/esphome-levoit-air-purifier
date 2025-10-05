@@ -92,7 +92,7 @@ void LevoitSelect::control(const std::string &value) {
       } else if (value == "Quiet") {
         onMask |= static_cast<uint32_t>(LevoitState::AUTO_QUIET);
         offMask |= static_cast<uint32_t>(LevoitState::AUTO_DEFAULT) | static_cast<uint32_t>(LevoitState::AUTO_EFFICIENT);
-      } else if (value == "Effecient") {
+      } else if (value == "Efficient") {
         onMask |= static_cast<uint32_t>(LevoitState::AUTO_EFFICIENT);
         offMask |= static_cast<uint32_t>(LevoitState::AUTO_QUIET) | static_cast<uint32_t>(LevoitState::AUTO_DEFAULT);
       }
