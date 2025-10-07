@@ -10,8 +10,8 @@ void LevoitSelect::setup() {
   switch (this->purpose_) {
     case LevoitSelectPurpose::PURIFIER_NIGHTLIGHT_MODE:
       this->parent_->register_state_listener(
-        static_cast<uint32_t>(LevoitState::NIGHTLIGHT_OFF) +
-        static_cast<uint32_t>(LevoitState::NIGHTLIGHT_LOW) +
+        static_cast<uint32_t>(LevoitState::NIGHTLIGHT_OFF) |
+        static_cast<uint32_t>(LevoitState::NIGHTLIGHT_LOW) |
         static_cast<uint32_t>(LevoitState::NIGHTLIGHT_HIGH),
         [this](uint32_t currentBits) {
           if (currentBits & static_cast<uint32_t>(LevoitState::NIGHTLIGHT_HIGH))
@@ -25,8 +25,8 @@ void LevoitSelect::setup() {
       break;
     case LevoitSelectPurpose::PURIFIER_FAN_MODE:
       this->parent_->register_state_listener(
-        static_cast<uint32_t>(LevoitState::FAN_MANUAL) +
-        static_cast<uint32_t>(LevoitState::FAN_AUTO) +
+        static_cast<uint32_t>(LevoitState::FAN_MANUAL) |
+        static_cast<uint32_t>(LevoitState::FAN_AUTO) |
         static_cast<uint32_t>(LevoitState::FAN_SLEEP),
         [this](uint32_t currentBits) {
           if (currentBits & static_cast<uint32_t>(LevoitState::FAN_MANUAL))
@@ -40,8 +40,8 @@ void LevoitSelect::setup() {
       break;
     case LevoitSelectPurpose::PURIFIER_AUTO_MODE:
       this->parent_->register_state_listener(
-        static_cast<uint32_t>(LevoitState::AUTO_DEFAULT) +
-        static_cast<uint32_t>(LevoitState::AUTO_QUIET) +
+        static_cast<uint32_t>(LevoitState::AUTO_DEFAULT) |
+        static_cast<uint32_t>(LevoitState::AUTO_QUIET) |
         static_cast<uint32_t>(LevoitState::AUTO_EFFICIENT),
         [this](uint32_t currentBits) {
           if (currentBits & static_cast<uint32_t>(LevoitState::AUTO_DEFAULT))
@@ -49,7 +49,7 @@ void LevoitSelect::setup() {
           else if (currentBits & static_cast<uint32_t>(LevoitState::AUTO_QUIET))
             this->publish_state("Quiet");
           else if (currentBits & static_cast<uint32_t>(LevoitState::AUTO_EFFICIENT))
-            this->publish_state("Effecient");
+            this->publish_state("Efficient");
         }
       );
       break;
@@ -64,37 +64,37 @@ void LevoitSelect::control(const std::string &value) {
     case LevoitSelectPurpose::PURIFIER_NIGHTLIGHT_MODE:
       if (value == "Off") { 
         onMask |= static_cast<uint32_t>(LevoitState::NIGHTLIGHT_OFF);
-        offMask |= static_cast<uint32_t>(LevoitState::NIGHTLIGHT_LOW) + static_cast<uint32_t>(LevoitState::NIGHTLIGHT_HIGH);
+        offMask |= static_cast<uint32_t>(LevoitState::NIGHTLIGHT_LOW) | static_cast<uint32_t>(LevoitState::NIGHTLIGHT_HIGH);
       } else if (value == "Low") { 
         onMask |= static_cast<uint32_t>(LevoitState::NIGHTLIGHT_LOW);
-        offMask |= static_cast<uint32_t>(LevoitState::NIGHTLIGHT_OFF) + static_cast<uint32_t>(LevoitState::NIGHTLIGHT_HIGH);
+        offMask |= static_cast<uint32_t>(LevoitState::NIGHTLIGHT_OFF) | static_cast<uint32_t>(LevoitState::NIGHTLIGHT_HIGH);
       } else if (value == "High") { 
         onMask |= static_cast<uint32_t>(LevoitState::NIGHTLIGHT_HIGH);
-        offMask |= static_cast<uint32_t>(LevoitState::NIGHTLIGHT_OFF) + static_cast<uint32_t>(LevoitState::NIGHTLIGHT_LOW);
+        offMask |= static_cast<uint32_t>(LevoitState::NIGHTLIGHT_OFF) | static_cast<uint32_t>(LevoitState::NIGHTLIGHT_LOW);
       }
       break;
     case LevoitSelectPurpose::PURIFIER_FAN_MODE:
       if (value == "Manual") {
         onMask |= static_cast<uint32_t>(LevoitState::FAN_MANUAL);
-        offMask |= static_cast<uint32_t>(LevoitState::FAN_AUTO) + static_cast<uint32_t>(LevoitState::FAN_SLEEP);
+        offMask |= static_cast<uint32_t>(LevoitState::FAN_AUTO) | static_cast<uint32_t>(LevoitState::FAN_SLEEP);
       } else if (value == "Auto") {
         onMask |= static_cast<uint32_t>(LevoitState::FAN_AUTO);
-        offMask |= static_cast<uint32_t>(LevoitState::FAN_MANUAL) + static_cast<uint32_t>(LevoitState::FAN_SLEEP);
+        offMask |= static_cast<uint32_t>(LevoitState::FAN_MANUAL) | static_cast<uint32_t>(LevoitState::FAN_SLEEP);
       } else if (value == "Sleep") {
         onMask |= static_cast<uint32_t>(LevoitState::FAN_SLEEP);
-        offMask |= static_cast<uint32_t>(LevoitState::FAN_MANUAL) + static_cast<uint32_t>(LevoitState::FAN_AUTO);
+        offMask |= static_cast<uint32_t>(LevoitState::FAN_MANUAL) | static_cast<uint32_t>(LevoitState::FAN_AUTO);
       }
       break;
     case LevoitSelectPurpose::PURIFIER_AUTO_MODE:
       if (value == "Default") {
         onMask |= static_cast<uint32_t>(LevoitState::AUTO_DEFAULT);
-        offMask |= static_cast<uint32_t>(LevoitState::AUTO_QUIET) + static_cast<uint32_t>(LevoitState::AUTO_EFFICIENT);
+        offMask |= static_cast<uint32_t>(LevoitState::AUTO_QUIET) | static_cast<uint32_t>(LevoitState::AUTO_EFFICIENT);
       } else if (value == "Quiet") {
         onMask |= static_cast<uint32_t>(LevoitState::AUTO_QUIET);
-        offMask |= static_cast<uint32_t>(LevoitState::AUTO_DEFAULT) + static_cast<uint32_t>(LevoitState::AUTO_EFFICIENT);
-      } else if (value == "Effecient") {
+        offMask |= static_cast<uint32_t>(LevoitState::AUTO_DEFAULT) | static_cast<uint32_t>(LevoitState::AUTO_EFFICIENT);
+      } else if (value == "Efficient") {
         onMask |= static_cast<uint32_t>(LevoitState::AUTO_EFFICIENT);
-        offMask |= static_cast<uint32_t>(LevoitState::AUTO_QUIET) + static_cast<uint32_t>(LevoitState::AUTO_DEFAULT);
+        offMask |= static_cast<uint32_t>(LevoitState::AUTO_QUIET) | static_cast<uint32_t>(LevoitState::AUTO_DEFAULT);
       }
       break;
   }

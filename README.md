@@ -1,7 +1,7 @@
 # Levoit Air Purifier Integration for ESPHome
 
 ## Supported:
-- Levoit Core 200s (Need Confirmation)
+- Levoit Core 200s (Tested)
 - Core 300s (Tested)
 - Core 400s (Tested, thank you @SeveranExp)
 
@@ -16,8 +16,8 @@ For details on the teardown please read the [blog post](https://vigue.me/posts/l
 ## Flash
 - Copy the provided sample configuration for your model to a new ESPHome configuration, while keeping the generated passwords
 - Compile and download the binary (Choose the modern format once compilation has completed)
-- Solder wires to pins TXD0, RXD0, IO0, +3V3, and GND near the ESP32 on the logic board, and connect these to a USB-UART converter
-- Connect IO0 to ground during power before connecting USB-UART to boot to bootloader.
+- Solder wires to pins TXD0, RXD0, IO0, +3V3, and GND near the ESP32 on the logic board, and connect these to a USB-UART converter. On some boards, if these are through holes, soldering may not be necessary.
+- Connect IO0 to ground during power before connecting USB-UART to boot to bootloader. On some boards, IO0 may not have it's own debug pin and the ESP32 GPIO0 pin on the esp can be used.
 
 ### Backup Existing Firmware
 ```bash

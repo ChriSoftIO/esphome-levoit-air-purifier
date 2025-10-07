@@ -47,7 +47,6 @@ void Levoit::setup() {
   xTaskCreatePinnedToCore(
       [](void *param) { static_cast<Levoit *>(param)->maint_task_(); },
       "MaintTask", 4096, this, 1, &maintTaskHandle_, tskNO_AFFINITY);
-
 }
 
 void Levoit::maint_task_() {
@@ -81,8 +80,8 @@ void Levoit::maint_task_() {
         ESP_LOGV(TAG, "State Changed from %u to %u", previousState, current_state_);
 
         uint32_t wifiLights = 
-          static_cast<uint32_t>(LevoitState::WIFI_LIGHT_SOLID) +
-          static_cast<uint32_t>(LevoitState::WIFI_LIGHT_FLASH) +
+          static_cast<uint32_t>(LevoitState::WIFI_LIGHT_SOLID) |
+          static_cast<uint32_t>(LevoitState::WIFI_LIGHT_FLASH) |
           static_cast<uint32_t>(LevoitState::WIFI_LIGHT_OFF);
 
         // check if lights need to be changed
@@ -93,14 +92,16 @@ void Levoit::maint_task_() {
               send_command_(LevoitCommand {
                 .payloadType = LevoitPayloadType::SET_WIFI_STATUS_LED,
                 .packetType = LevoitPacketType::SEND_MESSAGE,
-                .payload = {0x00, 0x01, 0x7D, 0x00, 0x7D, 0x00, 0x00}
+                .payload = {0x00, 0x01, 0x7D, 0x00, 0x7D, 0x00, 0x00},
+                .payload_len = 7
               });
             } else {
               // Blink
               send_command_(LevoitCommand {
                 .payloadType = LevoitPayloadType::SET_WIFI_STATUS_LED,
                 .packetType = LevoitPacketType::SEND_MESSAGE,
-                .payload = {0x00, 0x02, 0xF4, 0x01, 0xF4, 0x01, 0x00}
+                .payload = {0x00, 0x02, 0xF4, 0x01, 0xF4, 0x01, 0x00},
+                .payload_len = 7
               }); 
             }
           } else {
@@ -108,7 +109,8 @@ void Levoit::maint_task_() {
             send_command_(LevoitCommand {
               .payloadType = LevoitPayloadType::SET_WIFI_STATUS_LED,
               .packetType = LevoitPacketType::SEND_MESSAGE,
-              .payload = {0x00, 0x00, 0xF4, 0x01, 0xF4, 0x01, 0x00}
+              .payload = {0x00, 0x00, 0xF4, 0x01, 0xF4, 0x01, 0x00},
+              .payload_len = 7
             });
           }
         }
@@ -128,7 +130,8 @@ void Levoit::maint_task_() {
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::STATUS_REQUEST,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00}
+        .payload = {0x00},
+        .payload_len = 1
       });
       lastStatusPollTime = xTaskGetTickCount();
     }
@@ -143,7 +146,8 @@ void Levoit::command_sync_() {
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::SET_POWER_STATE,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00, commandState}
+        .payload = {0x00, commandState},
+        .payload_len = 2
       });
     }
 
@@ -152,7 +156,8 @@ void Levoit::command_sync_() {
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_SCREEN_BRIGHTNESS,
           .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, commandState ? (uint8_t) 0x64 : (uint8_t) 0x00}
+          .payload = {0x00, commandState ? (uint8_t) 0x64 : (uint8_t) 0x00},
+          .payload_len = 2
         });
     }
 
@@ -161,7 +166,8 @@ void Levoit::command_sync_() {
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::SET_DISPLAY_LOCK,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00, commandState}
+        .payload = {0x00, commandState},
+        .payload_len = 2
       });
     }
 
@@ -171,52 +177,60 @@ void Levoit::command_sync_() {
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
           .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00, 0x01, 0x01}
+          .payload = {0x00, 0x00, 0x01, 0x01},
+          .payload_len = 4
         });
       else
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_FAN_MODE,
           .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00}
+          .payload = {0x00, 0x00},
+          .payload_len = 2
         });
     } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_AUTO))
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::SET_FAN_MODE,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00, 0x02}
+        .payload = {0x00, 0x02},
+        .payload_len = 2
       });
     else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SLEEP))
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::SET_FAN_MODE,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00, 0x01}
+        .payload = {0x00, 0x01},
+        .payload_len = 2
       });          
 
     // fan speed
-    if (req_on_state_ && fanChangeMask && (current_state_ && static_cast<uint32_t>(LevoitState::POWER) || current_state_ && static_cast<uint32_t>(LevoitState::FAN_MANUAL)))  {
+    if ((req_on_state_ & fanChangeMask) && ((current_state_ & static_cast<uint32_t>(LevoitState::POWER)) || (current_state_ & static_cast<uint32_t>(LevoitState::FAN_MANUAL)))) {
       if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED1)) {
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
           .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00, 0x01, 0x01}
+          .payload = {0x00, 0x00, 0x01, 0x01},
+          .payload_len = 4
         });
       } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED2)) {
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
           .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00, 0x01, 0x02}
+          .payload = {0x00, 0x00, 0x01, 0x02},
+          .payload_len = 4
         });
       } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED3)) {
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
           .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00, 0x01, 0x03}
+          .payload = {0x00, 0x00, 0x01, 0x03},
+          .payload_len = 4
         });
       } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED4)) {
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
           .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00, 0x01, 0x04}
+          .payload = {0x00, 0x00, 0x01, 0x04},
+          .payload_len = 4
         });
       }
     }
@@ -226,19 +240,22 @@ void Levoit::command_sync_() {
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::SET_FAN_AUTO_MODE,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00, 0x00, 0x00, 0x00}
+        .payload = {0x00, 0x00, 0x00, 0x00},
+        .payload_len = 4
       });
     } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::AUTO_QUIET)) {
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::SET_FAN_AUTO_MODE,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00, 0x01, 0x00, 0x00}
+        .payload = {0x00, 0x01, 0x00, 0x00},
+        .payload_len = 4
       });
     } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::AUTO_EFFICIENT)) {
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::SET_FAN_AUTO_MODE,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00, 0x02, 0x00, 0x00}
+        .payload = {0x00, 0x02, 0x00, 0x00},
+        .payload_len = 4
       });
     }
 
@@ -247,19 +264,22 @@ void Levoit::command_sync_() {
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::SET_NIGHTLIGHT,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00, 0x00, 0x00}
+        .payload = {0x00, 0x00, 0x00},
+        .payload_len = 3
       });            
     } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::NIGHTLIGHT_LOW)) {
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::SET_NIGHTLIGHT,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00, 0x00, 0x32}
+        .payload = {0x00, 0x00, 0x32},
+        .payload_len = 3
       });   
     } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::NIGHTLIGHT_HIGH)) {
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::SET_NIGHTLIGHT,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00, 0x00, 0x64}
+        .payload = {0x00, 0x00, 0x64},
+        .payload_len = 3
       });   
     }
 
@@ -268,7 +288,8 @@ void Levoit::command_sync_() {
       send_command_(LevoitCommand {
         .payloadType = LevoitPayloadType::SET_RESET_FILTER,
         .packetType = LevoitPacketType::SEND_MESSAGE,
-        .payload = {0x00, 0x00}
+        .payload = {0x00, 0x00},
+        .payload_len = 2
       });
       // setting that its done, not sure how to check filter status yet
       current_state_ &= ~static_cast<uint32_t>(LevoitState::FILTER_RESET);
@@ -390,7 +411,7 @@ bool Levoit::validate_message_() {
   // acknowledge packet if required
   if (data[1] == 0x22) {
     LevoitCommand acknowledgeResponse = {
-        .payloadType = payloadType, .packetType = LevoitPacketType::ACK_MESSAGE, .payload = {0x00}};
+        .payloadType = payloadType, .packetType = LevoitPacketType::ACK_MESSAGE, .payload = {0x00},.payload_len = 1};
     this->send_raw_command(acknowledgeResponse);
   } else if (data[1] == 0x12) {
     // notify wait for ACK
@@ -433,29 +454,37 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
       bool autoQuiet = payload[15] == 0x01;
       bool autoEfficient = payload[15] == 0x02;
 
-      bool nightLightOff = payload[12] == 0x00;
-      bool nightLightLow = payload[12] == 0x32;
-      bool nightLightHigh = payload[12] == 0x64;
+      bool nightLightOff = false;
+      bool nightLightLow = false;
+      bool nightLightHigh = false;
 
       bool pm25NAN = false;
       bool pm25Change = false;
       bool airQualityChange = false;
 
-      pm25NAN = (payload[12] == 0xFF && payload[13] == 0xFF);
-      if (!pm25NAN) {
-        uint16_t raw_value = (payload[13] << 8) + payload[12];
-        uint32_t new_pm25Value = (raw_value * 10);
-        
-        if (new_pm25Value != pm25_value) {
-          pm25Change = true;
-          pm25_value = new_pm25Value;
-        }
-      }
+      if (device_model_ == LevoitDeviceModel::CORE_200S) {
+        // Core 200S has nightlight at payload[12]
+        nightLightOff = payload[12] == 0x00;
+        nightLightLow = payload[12] == 0x32;
+        nightLightHigh = payload[12] == 0x64;
+      } else {
+        // Core 300S/400S have PM2.5 sensor at payload[12-13]
+        pm25NAN = (payload[12] == 0xFF && payload[13] == 0xFF);
+        if (!pm25NAN) {
+          uint16_t raw_value = (payload[13] << 8) + payload[12];
+          uint32_t new_pm25Value = (raw_value * 10);
 
-      uint8_t newAirQuality = payload[11];
-      if (newAirQuality != air_quality) {
-        airQualityChange = true;
-        air_quality = newAirQuality;
+          if (new_pm25Value != pm25_value) {
+            pm25Change = true;
+            pm25_value = new_pm25Value;
+          }
+        }
+
+        uint8_t newAirQuality = payload[11];
+        if (newAirQuality != air_quality) {
+          airQualityChange = true;
+          air_quality = newAirQuality;
+        }
       }
 
       set_bit_(current_state_, power, LevoitState::POWER);
@@ -504,36 +533,48 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
   }
 }
 
-void Levoit::set_request_state(uint32_t onMask, uint32_t offMask, bool aquireMutex) {
-    if (aquireMutex && xSemaphoreTake(stateChangeMutex_, portMAX_DELAY) == pdTRUE) {
-      if (onMask & offMask) {
-        ESP_LOGE(TAG, "set_request_state - tried to set same bit on and off");
-        return;
-      }
-
-      // Filter out bits in onMask that are already on in current_state_
-      onMask &= ~current_state_;
-
-      // Filter out bits in offMask that are already off in current_state_
-      offMask &= current_state_;
-
-      if (onMask > 0) {
-        req_on_state_ |= onMask;
-        req_off_state_ &= ~onMask;
-      }
-
-      if (offMask > 0) {
-        req_off_state_ |= offMask;
-        req_on_state_ &= ~offMask;
-      }
-
-      ESP_LOGV(TAG, "set_request_state - Current State: %u, Requested On: %u, Request Off: %u", current_state_, req_on_state_, req_off_state_);
-
-      if (aquireMutex)
-        xSemaphoreGive(stateChangeMutex_);
-
-      xTaskNotifyGive(maintTaskHandle_);
+/// @brief Request state changes for the device
+/// @param onMask Bits to turn on
+/// @param offMask Bits to turn off
+/// @param acquireMutex Set to false ONLY if caller already holds stateChangeMutex_
+void Levoit::set_request_state(uint32_t onMask, uint32_t offMask, bool acquireMutex) {
+  bool gotMutex = false;
+  if (acquireMutex) {
+    if (xSemaphoreTake(stateChangeMutex_, portMAX_DELAY) != pdTRUE) {
+      ESP_LOGE(TAG, "Failed to take stateChangeMutex_");
+      return;
     }
+    gotMutex = true;
+  }
+
+  if ((onMask & offMask) != 0) {
+    ESP_LOGE(TAG, "set_request_state - tried to set same bit on and off");
+    if (gotMutex)
+      xSemaphoreGive(stateChangeMutex_);
+    return;
+  }
+
+  // Filter out bits in onMask that are already on in current_state_
+  onMask &= ~current_state_;
+  // Filter out bits in offMask that are already off in current_state_
+  offMask &= current_state_;
+
+  if (onMask) {
+    req_on_state_ |= onMask;
+    req_off_state_ &= ~onMask;
+  }
+  if (offMask) {
+    req_off_state_ |= offMask;
+    req_on_state_ &= ~offMask;
+  }
+
+  ESP_LOGV(TAG, "set_request_state - Current State: %u, Requested On: %u, Request Off: %u", current_state_,
+           req_on_state_, req_off_state_);
+
+  if (gotMutex)
+    xSemaphoreGive(stateChangeMutex_);
+
+  xTaskNotifyGive(maintTaskHandle_);
 }
 
 void Levoit::set_bit_(uint32_t &state, bool condition, LevoitState bit) {
@@ -566,6 +607,11 @@ void Levoit::send_raw_command(LevoitCommand command) {
 }
 
 void Levoit::process_raw_command_(LevoitCommand command) {
+  if (command.payload_len > MAX_PAYLOAD_SIZE) {
+    ESP_LOGE(TAG, "payload_len overflow (%u)", command.payload_len);
+    return;
+  }
+
   this->last_command_timestamp_ = millis();
 
   sequenceNumber_++;
@@ -579,7 +625,7 @@ void Levoit::process_raw_command_(LevoitCommand command) {
     0xA5,
     (uint8_t) command.packetType,
     sequenceNumber_,
-    (uint8_t) (command.payload.size() + 3),
+    (uint8_t) (command.payload_len + 3),
     0x00,
     0x00,
     payloadTypeByte1,
@@ -587,8 +633,8 @@ void Levoit::process_raw_command_(LevoitCommand command) {
     payloadTypeByte3
   };
 
-  if (!command.payload.empty())
-    rawPacket.insert(rawPacket.end(), command.payload.begin(), command.payload.end());
+  for (uint8_t i = 0; i < command.payload_len; i++)
+    rawPacket.push_back(command.payload[i]);
 
   // Calculate checksum & insert into packet
   uint8_t checksum = 255;
@@ -615,6 +661,10 @@ void Levoit::process_raw_command_(LevoitCommand command) {
 }
 
 void Levoit::send_command_(const LevoitCommand &command) {
+  if (command.payload_len > MAX_PAYLOAD_SIZE) {
+    ESP_LOGE(TAG, "payload_len overflow (%u)", command.payload_len);
+    return;
+  }
   auto modified_command = command;
   modified_command.payloadType = static_cast<LevoitPayloadType>(get_model_specific_payload_type(command.payloadType));
   if (xQueueSend(tx_queue_, &modified_command, pdMS_TO_TICKS(10)) != pdTRUE) {
