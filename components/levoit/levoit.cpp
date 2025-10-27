@@ -691,6 +691,8 @@ void Levoit::set_device_model(std::string model) {
     device_model_ = LevoitDeviceModel::CORE_400S;
   } else if (model == "core200s") {
     device_model_ = LevoitDeviceModel::CORE_200S;
+  } else if (model == "classic300s") {
+    device_model_ = LevoitDeviceModel::CLASSIC_300S;
   } else {
     ESP_LOGW(TAG, "Unknown device model: %s", model.c_str());
   }
