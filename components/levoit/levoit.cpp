@@ -350,7 +350,7 @@ bool Levoit::validate_message_() {
     return new_byte == 0xA5;
 
   if (at == 1) {
-    ESP_LOGV(TAG, "%s", format_hex_pretty(data, at).c_str());
+    ESP_LOGV(TAG, "test= %02X", new_byte);
     if (new_byte == 0x52) {
       ESP_LOGE(TAG, "Received error response, ignoring packet");
       if (xSemaphoreTake(stateChangeMutex_, portMAX_DELAY) == pdTRUE) {
