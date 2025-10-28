@@ -611,7 +611,7 @@ void Levoit::register_state_listener(uint32_t changeMask, const std::function<vo
 
 void Levoit::process_tx_queue_task_() {
   LevoitCommand command;
-  while (xQueueReceive(tx_queue_, &command, pdMS_TO_TICKS(100)) == pdPASS) {
+  while (xQueueReceive(tx_queue_, &command, pdMS_TO_TICKS(10)) == pdPASS) {
     process_raw_command_(command);
     vTaskDelay(pdMS_TO_TICKS(command_delay_));
   }
