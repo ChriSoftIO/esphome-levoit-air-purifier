@@ -344,7 +344,7 @@ bool Levoit::validate_message_() {
   auto *data = &this->rx_message_[0];
   uint8_t new_byte = data[at];
 
-  ESP_LOGV(TAG, "validate_message_ (%06x): %s", (uint32_t) new_byte, format_hex_pretty(data, at).c_str());
+  ESP_LOGV(TAG, "validate_message_ (%06x): %s", (uint32_t) at, format_hex_pretty(data, at).c_str());
 
   if (at == 0)
     return new_byte == 0xA5;
