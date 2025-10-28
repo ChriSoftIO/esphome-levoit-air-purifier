@@ -345,12 +345,12 @@ bool Levoit::validate_message_() {
   uint8_t new_byte = data[at];
 
   //ESP_LOGV(TAG, "validate_message_ (%06x): %s", (uint32_t) at, format_hex_pretty(data, at).c_str());
-  ESP_LOGV(TAG, "%s", format_hex_pretty(data, at).c_str());
 
   if (at == 0)
     return new_byte == 0xA5;
 
   if (at == 1) {
+    ESP_LOGV(TAG, "%s", format_hex_pretty(data, at).c_str());
     if (new_byte == 0x52) {
       ESP_LOGE(TAG, "Received error response, ignoring packet");
       if (xSemaphoreTake(stateChangeMutex_, portMAX_DELAY) == pdTRUE) {
