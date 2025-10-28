@@ -393,7 +393,9 @@ bool Levoit::validate_message_() {
     return true;
   }
 
-  ESP_LOGV(TAG, "test5");
+  //ESP_LOGV(TAG, "test5");
+
+  ESP_LOGV(TAG, "validate_message_ (%06x): %s", (uint32_t) at, format_hex_pretty(data, at).c_str());
 
   uint8_t calc_checksum = 255;
   for (uint8_t i = 0; i < 6 + payloadLength; i++) {
