@@ -468,7 +468,7 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
         nightLightLow = payload[12] == 0x32;
         nightLightHigh = payload[12] == 0x64;
       } else if (device_model_ == LevoitDeviceModel::CLASSIC_300S) {
-        //TODO
+        //TODOs
         uint8_t humidity;
       } else {
         // Core 300S/400S have PM2.5 sensor at payload[12-13]
