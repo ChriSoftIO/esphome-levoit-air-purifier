@@ -360,7 +360,7 @@ bool Levoit::validate_message_() {
       }
       return false;
     }
-    return (new_byte == 0x12) || (new_byte == 0x22);
+    return (new_byte == 0x12) || (new_byte == 0x22) || (new_byte == 0x02);
   }
 
   //ESP_LOGV(TAG, "test");
