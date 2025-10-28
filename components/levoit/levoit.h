@@ -90,6 +90,12 @@ static const PayloadTypeOverrideMap MODEL_SPECIFIC_PAYLOAD_TYPES = {
          {LevoitPayloadType::AUTO_STATUS, 0x016040}
          // ... add other model-specific overrides here ...
      }},
+     {LevoitDeviceModel::CLASSIC_300S,
+     {
+         {LevoitPayloadType::STATUS_REQUEST, 0x018540}, {LevoitPayloadType::STATUS_RESPONSE, 0x018540},
+         {LevoitPayloadType::AUTO_STATUS, 0x018540}
+         // ... add other model-specific overrides here ...
+     }},
     // ... add other device models and their overrides here ...
 };
 
