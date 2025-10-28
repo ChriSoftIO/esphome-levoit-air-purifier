@@ -368,26 +368,26 @@ bool Levoit::validate_message_() {
   if (at == 2)
     return true;
 
-  ESP_LOGV(TAG, "test1");
+  //ESP_LOGV(TAG, "test1");
 
   uint8_t payloadLength = data[3];
   if (at == 3) {
     return true;
   }
 
-  ESP_LOGV(TAG, "test2");
+  //ESP_LOGV(TAG, "test2");
 
   if (at == 4)
     return (new_byte == 0x00);
 
-  ESP_LOGV(TAG, "test3");
+  //ESP_LOGV(TAG, "test3");
 
   uint8_t payloadChecksum = data[5];
   if (at == 5) {
     return true;
   }
 
-  ESP_LOGV(TAG, "test4");
+  //ESP_LOGV(TAG, "test4");
 
   if (at - 5 < payloadLength) {
     return true;
