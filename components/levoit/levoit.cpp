@@ -540,7 +540,7 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
       set_bit_(current_state_, pm25NAN, LevoitState::PM25_NAN);
       set_bit_(current_state_, pm25Change, LevoitState::PM25_CHANGE);
       set_bit_(current_state_, airQualityChange, LevoitState::AIR_QUALITY_CHANGE);
-      set_bit_(current_state_, humidityChange, LevoitState::HUMIDTY_CHANGE);
+      set_bit_(current_state_, humidityChange, LevoitState::HUMIDITY_CHANGE);
 
       if (previousState != current_state_) {
         ESP_LOGV(TAG, "State Changed from %u to %u", previousState, current_state_);

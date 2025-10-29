@@ -59,7 +59,7 @@ enum class LevoitState : uint32_t {
   WIFI_LIGHT_SOLID    = 1 << 22,
   WIFI_LIGHT_FLASH    = 1 << 23,
   WIFI_LIGHT_OFF      = 1 << 24,
-  HUMIDTY_CHANGE      = 1 << 25
+  HUMIDITY_CHANGE      = 1 << 25
 };
 
 struct LevoitStateListener {
