@@ -10,7 +10,7 @@ from esphome.const import (
     DEVICE_CLASS_AQI,
     STATE_CLASS_MEASUREMENT,
     DEVICE_CLASS_HUMIDITY,
-    UNIT_HUMIDITY,
+    UNIT_HUMIDITY
 )
 
 from .. import levoit_ns, CONF_LEVOIT_ID, Levoit
