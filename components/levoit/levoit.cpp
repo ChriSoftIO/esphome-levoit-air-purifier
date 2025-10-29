@@ -156,7 +156,7 @@ void Levoit::command_sync_() {
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_SCREEN_BRIGHTNESS,
           .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, commandState ? (uint8_t) 0x02 : (uint8_t) 0x00},
+          .payload = {0x00, commandState ? (uint8_t) 0x64 : (uint8_t) 0x00},
           .payload_len = 2
         });
     }
