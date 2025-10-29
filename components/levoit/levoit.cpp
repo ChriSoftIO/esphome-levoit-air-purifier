@@ -204,34 +204,59 @@ void Levoit::command_sync_() {
 
     // fan speed
     if ((req_on_state_ & fanChangeMask) && ((current_state_ & static_cast<uint32_t>(LevoitState::POWER)) || (current_state_ & static_cast<uint32_t>(LevoitState::FAN_MANUAL)))) {
-      if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED1)) {
-        send_command_(LevoitCommand {
-          .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
-          .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00, 0x01, 0x01},
-          .payload_len = 4
-        });
-      } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED2)) {
-        send_command_(LevoitCommand {
-          .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
-          .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00, 0x01, 0x05},
-          .payload_len = 4
-        });
-      } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED3)) {
-        send_command_(LevoitCommand {
-          .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
-          .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00, 0x01, 0x09},
-          .payload_len = 4
-        });
-      } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED4)) {
-        send_command_(LevoitCommand {
-          .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
-          .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00, 0x01, 0x04},
-          .payload_len = 4
-        });
+      if (device_model_ == LevoitDeviceModel::CLASSIC_300S) {
+        if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED1)) {
+          send_command_(LevoitCommand {
+            .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
+            .packetType = LevoitPacketType::SEND_MESSAGE,
+            .payload = {0x00, 0x00, 0x01, 0x01},
+            .payload_len = 4
+          });
+        } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED2)) {
+          send_command_(LevoitCommand {
+            .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
+            .packetType = LevoitPacketType::SEND_MESSAGE,
+            .payload = {0x00, 0x00, 0x01, 0x05},
+            .payload_len = 4
+          });
+        } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED3)) {
+          send_command_(LevoitCommand {
+            .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
+            .packetType = LevoitPacketType::SEND_MESSAGE,
+            .payload = {0x00, 0x00, 0x01, 0x09},
+            .payload_len = 4
+          });
+        }
+      } else {
+        if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED1)) {
+          send_command_(LevoitCommand {
+            .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
+            .packetType = LevoitPacketType::SEND_MESSAGE,
+            .payload = {0x00, 0x00, 0x01, 0x01},
+            .payload_len = 4
+          });
+        } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED2)) {
+          send_command_(LevoitCommand {
+            .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
+            .packetType = LevoitPacketType::SEND_MESSAGE,
+            .payload = {0x00, 0x00, 0x01, 0x02},
+            .payload_len = 4
+          });
+        } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED3)) {
+          send_command_(LevoitCommand {
+            .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
+            .packetType = LevoitPacketType::SEND_MESSAGE,
+            .payload = {0x00, 0x00, 0x01, 0x03},
+            .payload_len = 4
+          });
+        } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED4)) {
+          send_command_(LevoitCommand {
+            .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
+            .packetType = LevoitPacketType::SEND_MESSAGE,
+            .payload = {0x00, 0x00, 0x01, 0x04},
+            .payload_len = 4
+          });
+        }
       }
     }
 
