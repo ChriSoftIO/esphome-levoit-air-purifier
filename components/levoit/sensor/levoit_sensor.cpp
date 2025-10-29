@@ -36,6 +36,15 @@ void LevoitSensor::setup() {
         }
       );
       break;
+    case LevoitSensorPurpose::HUMIDITY:
+      this->parent_->register_state_listener(
+        static_cast<uint32_t>(LevoitState::HUMIDITY_CHANGE),
+        [this](uint32_t currentBits) {
+          this->publish_state(this->parent_->humidity);
+          this->parent_->set_request_state(0, static_cast<uint32_t>(LevoitState::HUMIDITY_CHANGE), false);
+        }
+      );
+      break;
   }
 
 }
