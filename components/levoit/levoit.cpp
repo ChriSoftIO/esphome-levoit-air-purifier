@@ -451,7 +451,15 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
     if (xSemaphoreTake(stateChangeMutex_, portMAX_DELAY) == pdTRUE) {
       uint32_t previousState = current_state_;
       bool power = payload[4];
-      bool display = payload[device_model_ == LevoitDeviceModel::CORE_400S ? 9 : 7] != 0x00;
+      bool display;
+      if (device_model_ == LevoitDeviceModel::CORE_400S) {
+        display = payload[9] != 0x00;
+      } else if (device_model_ == LevoitDeviceModel::CLASSIC_300S) {
+        display = payload[13] != 0x00;  // índice específico para classic300s
+      } else {
+        display = payload[7] != 0x00;  // índice para otros modelos
+      }
+
       bool displayLock = payload[device_model_ == LevoitDeviceModel::CORE_200S ? 11 : 14] != 0x00;
 
       uint8_t fanSpeedIndex = 9;
