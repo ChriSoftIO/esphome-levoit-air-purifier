@@ -458,6 +458,7 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
       switch (device_model_) {
         case LevoitDeviceModel::CORE_400S: fanSpeedIndex = 7; break;
         case LevoitDeviceModel::CORE_200S: fanSpeedIndex = 6; break;
+        case LevoitDeviceModel::CLASSIC_300S: fanSpeedIndex = 6; break;
       }
       uint8_t fanSpeed = power ? payload[fanSpeedIndex] : 0;
       bool fan1 = fanSpeed == 1; bool fan2 = fanSpeed == 2;
