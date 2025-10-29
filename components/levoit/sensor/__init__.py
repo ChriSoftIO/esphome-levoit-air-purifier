@@ -8,7 +8,8 @@ from esphome.const import (
     ICON_BLUR,
     DEVICE_CLASS_PM25,
     DEVICE_CLASS_AQI,
-    STATE_CLASS_MEASUREMENT
+    STATE_CLASS_MEASUREMENT,
+    DEVICE_CLASS_HUMIDITY,
 )
 
 from .. import levoit_ns, CONF_LEVOIT_ID, Levoit
@@ -25,7 +26,8 @@ CONFIG_SCHEMA = (
     cv.Schema({
         cv.GenerateID(CONF_LEVOIT_ID): cv.use_id(Levoit),
         cv.Optional(CONF_PM_2_5): sensor.sensor_schema(LevoitSensor, unit_of_measurement=UNIT_MICROGRAMS_PER_CUBIC_METER, icon=ICON_BLUR, accuracy_decimals=1, device_class=DEVICE_CLASS_PM25, state_class=STATE_CLASS_MEASUREMENT),
-        cv.Optional(CONF_AIR_QUALITY): sensor.sensor_schema(LevoitSensor, icon=ICON_BLUR, accuracy_decimals=0, device_class=DEVICE_CLASS_AQI, state_class=STATE_CLASS_MEASUREMENT)
+        cv.Optional(CONF_AIR_QUALITY): sensor.sensor_schema(LevoitSensor, icon=ICON_BLUR, accuracy_decimals=0, device_class=DEVICE_CLASS_AQI, state_class=STATE_CLASS_MEASUREMENT),
+        cv.Optional("humidity"): sensor.sensor_schema(LevoitSensor, icon=ICON_BLUR, accuracy_decimals=0, device_class=DEVICE_CLASS_HUMIDITY, state_class=STATE_CLASS_MEASUREMENT)
     })
 )
 
@@ -40,3 +42,7 @@ async def to_code(config):
     if air_quality := config.get(CONF_AIR_QUALITY):
         var = await sensor.new_sensor(air_quality, parent, LevoitSensorPurpose.AIR_QUALITY)
         await cg.register_component(var, air_quality)
+
+    if humidity := config.get("humidity"):
+        var = await sensor.new_sensor(humidity, parent, LevoitSensorPurpose.HUMIDITY)
+        await cg.register_component(var, humidity)
