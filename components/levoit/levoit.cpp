@@ -215,14 +215,14 @@ void Levoit::command_sync_() {
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
           .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00, 0x01, 0x02},
+          .payload = {0x00, 0x00, 0x01, 0x05},
           .payload_len = 4
         });
       } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED3)) {
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
           .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, 0x00, 0x01, 0x03},
+          .payload = {0x00, 0x00, 0x01, 0x09},
           .payload_len = 4
         });
       } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED4)) {
