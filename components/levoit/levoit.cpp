@@ -156,7 +156,7 @@ void Levoit::command_sync_() {
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_SCREEN_BRIGHTNESS,
           .packetType = LevoitPacketType::SEND_MESSAGE,
-          .payload = {0x00, commandState ? (uint8_t) 0x64 : (uint8_t) 0x00},
+          .payload = {0x00, commandState ? (uint8_t) 0x00 : (uint8_t) 0x64},
           .payload_len = 2
         });
     }
@@ -463,7 +463,7 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
       if (device_model_ == LevoitDeviceModel::CORE_400S) {
         display = payload[9] != 0x00;
       } else if (device_model_ == LevoitDeviceModel::CLASSIC_300S) {
-        display = payload[13] == 0x00;  // índice específico para classic300s
+        display = payload[13] != 0x02;  // índice específico para classic300s
       } else {
         display = payload[7] != 0x00;  // índice para otros modelos
       }
