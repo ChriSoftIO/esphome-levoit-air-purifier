@@ -482,7 +482,6 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
       bool pm25Change = false;
       bool airQualityChange = false;
 
-      bool humidity = false;
       bool humidityChange = false;
 
       if (device_model_ == LevoitDeviceModel::CORE_200S) {
@@ -495,7 +494,7 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
         nightLightOff = payload[15] == 0x00;
         nightLightLow = payload[15] == 0x32;
         nightLightHigh = payload[15] == 0x64;
-        //TODO
+        // Classic 300S has humidity sensor at payload[11]
         uint8_t newHumidity = payload[11];
         if (newHumidity != humidity) {
           humidityChange = true;
