@@ -482,6 +482,9 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
       bool pm25Change = false;
       bool airQualityChange = false;
 
+      bool humidity = false;
+      bool humidityChange = false;
+
       if (device_model_ == LevoitDeviceModel::CORE_200S) {
         // Core 200S has nightlight at payload[12]
         nightLightOff = payload[12] == 0x00;
@@ -493,7 +496,11 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
         nightLightLow = payload[15] == 0x32;
         nightLightHigh = payload[15] == 0x64;
         //TODO
-        uint8_t humidity = payload[11];
+        uint8_t newHumidity = payload[11];
+        if (newHumidity != humidity) {
+          humidityChange = true;
+          humidity = newHumidity;
+        }
       } else {
         // Core 300S/400S have PM2.5 sensor at payload[12-13]
         pm25NAN = (payload[12] == 0xFF && payload[13] == 0xFF);
@@ -533,6 +540,7 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
       set_bit_(current_state_, pm25NAN, LevoitState::PM25_NAN);
       set_bit_(current_state_, pm25Change, LevoitState::PM25_CHANGE);
       set_bit_(current_state_, airQualityChange, LevoitState::AIR_QUALITY_CHANGE);
+      set_bit_(current_state_, humidityChange, LevoitState::HUMIDTY_CHANGE);
 
       if (previousState != current_state_) {
         ESP_LOGV(TAG, "State Changed from %u to %u", previousState, current_state_);

@@ -58,7 +58,8 @@ enum class LevoitState : uint32_t {
   FILTER_RESET        = 1 << 21,
   WIFI_LIGHT_SOLID    = 1 << 22,
   WIFI_LIGHT_FLASH    = 1 << 23,
-  WIFI_LIGHT_OFF      = 1 << 24
+  WIFI_LIGHT_OFF      = 1 << 24,
+  HUMIDTY_CHANGE      = 1 << 25
 };
 
 struct LevoitStateListener {
@@ -120,6 +121,7 @@ class Levoit : public Component, public uart::UARTDevice {
     static_cast<uint32_t>(LevoitState::FAN_SLEEP);
   uint32_t pm25_value = 1000;
   uint8_t air_quality = 255;
+  uint8_t humidity = 255;
 
  protected:
   QueueHandle_t rx_queue_;
