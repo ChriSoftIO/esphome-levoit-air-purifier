@@ -458,7 +458,7 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
       switch (device_model_) {
         case LevoitDeviceModel::CORE_400S: fanSpeedIndex = 7; break;
         case LevoitDeviceModel::CORE_200S: fanSpeedIndex = 6; break;
-        case LevoitDeviceModel::CLASSIC_300S: fanSpeedIndex = 6; break;
+        case LevoitDeviceModel::CLASSIC_300S: fanSpeedIndex = 14; break;
       }
       uint8_t fanSpeed = power ? payload[fanSpeedIndex] : 0;
       bool fan1 = fanSpeed == 1; bool fan2 = fanSpeed == 2;
@@ -486,7 +486,11 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
         nightLightLow = payload[12] == 0x32;
         nightLightHigh = payload[12] == 0x64;
       } else if (device_model_ == LevoitDeviceModel::CLASSIC_300S) {
-        //TODOs
+        // Core 200S has nightlight at payload[12]
+        nightLightOff = payload[15] == 0x00;
+        nightLightLow = payload[15] == 0x32;
+        nightLightHigh = payload[15] == 0x64;
+        //TODO
         uint8_t humidity = payload[11];
       } else {
         // Core 300S/400S have PM2.5 sensor at payload[12-13]
