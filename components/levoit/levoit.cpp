@@ -461,8 +461,14 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
         case LevoitDeviceModel::CLASSIC_300S: fanSpeedIndex = 14; break;
       }
       uint8_t fanSpeed = power ? payload[fanSpeedIndex] : 0;
-      bool fan1 = fanSpeed == 1; bool fan2 = fanSpeed == 2;
-      bool fan3 = fanSpeed == 3; bool fan4 = fanSpeed == 4;
+
+      if (device_model_ == LevoitDeviceModel::CLASSIC_300S) {
+        bool fan1 = fanSpeed == 1; bool fan2 = fanSpeed == 5;
+        bool fan3 = fanSpeed == 9; bool fan4 = fanSpeed == 4;
+      } else { 
+        bool fan1 = fanSpeed == 1; bool fan2 = fanSpeed == 2;
+        bool fan3 = fanSpeed == 3; bool fan4 = fanSpeed == 4;
+      }
 
       bool fanManual = payload[5] == 0x00;
       bool fanAuto  = payload[5] == 0x02;
@@ -486,7 +492,7 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
         nightLightLow = payload[12] == 0x32;
         nightLightHigh = payload[12] == 0x64;
       } else if (device_model_ == LevoitDeviceModel::CLASSIC_300S) {
-        // Core 200S has nightlight at payload[12]
+        // Classic 300S has nightlight at payload[15]
         nightLightOff = payload[15] == 0x00;
         nightLightLow = payload[15] == 0x32;
         nightLightHigh = payload[15] == 0x64;
