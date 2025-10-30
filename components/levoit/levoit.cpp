@@ -502,7 +502,7 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
       bool fanAuto  = payload[5] == 0x02;
 
       if (device_model_ == LevoitDeviceModel::CLASSIC_300S) {
-        fanManual = payload[13] == 0x00;
+        fanManual = payload[13] == 0x01;
         fanAuto = payload[9] == 0x00;
       }
 
