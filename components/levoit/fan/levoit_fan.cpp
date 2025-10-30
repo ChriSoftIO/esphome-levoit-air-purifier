@@ -45,6 +45,9 @@ fan::FanTraits LevoitFan::get_traits() {
     case LevoitDeviceModel::CORE_400S:
       // 400s has 4 speeds
       return fan::FanTraits(false, true, false, 4);
+    case LevoitDeviceModel::CLASSIC_300S:
+      // 400s has 4 speeds
+      return fan::FanTraits(false, true, false, 4);
     default:
       // 200s, 300s has 3 speeds
       return fan::FanTraits(false, true, false, 3);
