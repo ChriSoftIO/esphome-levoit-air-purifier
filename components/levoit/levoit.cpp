@@ -173,7 +173,7 @@ void Levoit::command_sync_() {
 
     // fan mode
     if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_MANUAL)) {
-      if (device_model_ == LevoitDeviceModel::CLASSIC_300S)
+      if (device_model_ == LevoitDeviceModel::CORE_400S)
         send_command_(LevoitCommand {
           .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
           .packetType = LevoitPacketType::SEND_MESSAGE,
@@ -502,7 +502,8 @@ void Levoit::handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t le
       bool fanAuto  = payload[5] == 0x02;
 
       if (device_model_ == LevoitDeviceModel::CLASSIC_300S) {
-        fanAuto = payload[13] == 0x03;
+        fanManual = payload[13] == 0x00;
+        fanAuto = payload[9] == 0x00;
       }
 
       bool fanSleep  = payload[5] == 0x01;
