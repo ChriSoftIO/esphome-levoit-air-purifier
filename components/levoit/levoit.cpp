@@ -205,6 +205,7 @@ void Levoit::command_sync_() {
     // fan speed
     if ((req_on_state_ & fanChangeMask) && ((current_state_ & static_cast<uint32_t>(LevoitState::POWER)) || (current_state_ & static_cast<uint32_t>(LevoitState::FAN_MANUAL)))) {
       if (device_model_ == LevoitDeviceModel::CLASSIC_300S) {
+        ESP_LOGV(TAG, "Setting fan speed for Classic 300S %i", req_on_state_);
         if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED1)) {
           send_command_(LevoitCommand {
             .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
@@ -224,13 +225,6 @@ void Levoit::command_sync_() {
             .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
             .packetType = LevoitPacketType::SEND_MESSAGE,
             .payload = {0x00, 0x00, 0x01, 0x09},
-            .payload_len = 4
-          });
-        } else if (req_on_state_ & static_cast<uint32_t>(LevoitState::FAN_SPEED4)) {
-          send_command_(LevoitCommand {
-            .payloadType = LevoitPayloadType::SET_FAN_MANUAL,
-            .packetType = LevoitPacketType::SEND_MESSAGE,
-            .payload = {0x00, 0x00, 0x01, 0x04},
             .payload_len = 4
           });
         }
