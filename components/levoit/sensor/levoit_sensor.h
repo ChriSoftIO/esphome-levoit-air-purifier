@@ -23,6 +23,7 @@ class LevoitSensor : public Component, public sensor::Sensor {
  protected:
   Levoit *parent_;
   LevoitSensorPurpose purpose_;
+  binary_sensor::BinarySensor* button_{nullptr};
 };
 
 }  // namespace levoit
