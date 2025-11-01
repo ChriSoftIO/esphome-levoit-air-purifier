@@ -122,7 +122,10 @@ class Levoit : public Component, public uart::UARTDevice {
   uint32_t pm25_value = 1000;
   uint8_t air_quality = 255;
   uint8_t humidity = 255;
-
+  uint8_t temperature = 255;
+  bool out_of_water = false
+  bool water_tank_lifted = false;
+  
  protected:
   QueueHandle_t rx_queue_;
   QueueHandle_t tx_queue_;
