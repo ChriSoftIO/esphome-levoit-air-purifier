@@ -52,5 +52,5 @@ async def to_code(config):
         await cg.register_component(var, humidity)
 
     if out_of_water := config.get("out_of_water"):
-        var = await binary_sensor.new_binary_sensor(out_of_water)
+        var = await binary_sensor.new_binary_sensor(out_of_water, parent)
         await cg.register_component(var, out_of_water)
