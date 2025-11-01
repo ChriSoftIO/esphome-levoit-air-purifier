@@ -16,14 +16,12 @@ class LevoitSensor : public Component, public sensor::Sensor {
   void setup() override;
   void dump_config() override;
 
-  void set_up_bsensor(binary_sensor::BinarySensor* button) { 
-    this->button_ = button;
-  }
+  void set_up_bsensor(binary_sensor::BinarySensor* sensor) { up_bsensor_ = sensor; }
 
  protected:
   Levoit *parent_;
   LevoitSensorPurpose purpose_;
-  binary_sensor::BinarySensor* button_{nullptr};
+  binary_sensor::BinarySensor* up_bsensor_{nullptr};
 };
 
 }  // namespace levoit
