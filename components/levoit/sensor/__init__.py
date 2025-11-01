@@ -51,6 +51,6 @@ async def to_code(config):
         var = await sensor.new_sensor(humidity, parent, LevoitSensorPurpose.HUMIDITY)
         await cg.register_component(var, humidity)
 
-    if out_of_water := config.get("out_of_water"):
+    if "out_of_water" in config:
         sens = await binary_sensor.new_binary_sensor(config["out_of_water"])
         cg.add(parent.set_up_bsensor(sens))
