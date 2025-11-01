@@ -15,6 +15,8 @@ from esphome.const import (
 
 from .. import levoit_ns, CONF_LEVOIT_ID, Levoit
 
+AUTO_LOAD = [ "binary_sensor", "sensor" ]
+
 DEPENDENCIES = ["levoit"]
 CODEOWNERS = ["@acvigue"]
 
@@ -50,5 +52,5 @@ async def to_code(config):
         await cg.register_component(var, humidity)
 
     if out_of_water := config.get("out_of_water"):
-        var = await binary_sensor.new_binary_sensor(config["out_of_water"])
-        await cg.register_component(var, out_of_water)
+        sens = await binary_sensor.new_binary_sensor(humidity, parent, config["out_of_water"])
+        cg.add(var.set_up_bsensor(sens))

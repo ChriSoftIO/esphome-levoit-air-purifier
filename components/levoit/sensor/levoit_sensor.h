@@ -3,6 +3,7 @@
 #include "esphome/core/component.h"
 #include "esphome/components/levoit/levoit.h"
 #include "esphome/components/sensor/sensor.h"
+#include "esphome/components/binary_sensor/binary_sensor.h"
 
 namespace esphome {
 namespace levoit {
@@ -14,6 +15,8 @@ class LevoitSensor : public Component, public sensor::Sensor {
   LevoitSensor(Levoit *parent, LevoitSensorPurpose purpose) : parent_(parent), purpose_(purpose) {}
   void setup() override;
   void dump_config() override;
+
+  void set_up_bsensor(binary_sensor::BinarySensor* sensor) { up_bsensor_ = sensor; }
 
  protected:
   Levoit *parent_;
