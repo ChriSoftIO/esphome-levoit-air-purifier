@@ -51,4 +51,4 @@ async def to_code(config):
 
     if out_of_water := config.get("out_of_water"):
         var = await binary_sensor.new_binary_sensor(config["out_of_water"])
-        await cg.register_component(var, out_of_water)
+        await cg.add(var, out_of_water)
