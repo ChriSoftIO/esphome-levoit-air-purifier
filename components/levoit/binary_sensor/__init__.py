@@ -15,8 +15,7 @@ CONFIG_SCHEMA = (
 )
 
 async def to_code(config):
-    var = cg.new_Pvariable(config[CONF_LEVOIT_ID])
-    await cg.register_component(var, config)
+    var = await cg.get_variable(config[CONF_LEVOIT_ID])
 
     if "out_of_water" in config:
         oow = await binary_sensor.new_binary_sensor(config["out_of_water"])
