@@ -10,7 +10,7 @@ namespace levoit {
 
 enum LevoitSensorPurpose : uint8_t { PM25, AIR_QUALITY, HUMIDITY };
 
-class LevoitSensor : public Component, public sensor::Sensor {
+class LevoitSensor : public Component{
  public:
   LevoitSensor(Levoit *parent, LevoitSensorPurpose purpose) : parent_(parent), purpose_(purpose) {}
   void setup() override;
