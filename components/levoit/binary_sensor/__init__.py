@@ -7,7 +7,7 @@ from .. import levoit_ns, CONF_LEVOIT_ID, Levoit
 DEPENDENCIES = ["levoit"]
 CODEOWNERS = ["@acvigue"]
 
-LevoitBinarySensor = levoit_ns.class_("LevoitBinarySensor", cg.Component, binary_sensor.Binary_Sensor)
+LevoitBinarySensor = levoit_ns.class_("LevoitBinarySensor", cg.Component, binary_sensor.BinarySensor)
 
 CONFIG_SCHEMA = (
     cv.Schema({
