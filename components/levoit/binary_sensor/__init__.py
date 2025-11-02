@@ -18,4 +18,4 @@ async def to_code(config):
     parent = await cg.get_variable(config[CONF_LEVOIT_ID])
     if out_of_water := config.get("out_of_water"):
         var = await binary_sensor.new_binary_sensor(config["out_of_water"])
-        cg.add(parent.set_up_bsensor(var))
+        cg.add(parent.set_button(var))
