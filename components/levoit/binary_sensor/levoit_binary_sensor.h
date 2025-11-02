@@ -13,7 +13,7 @@ class LevoitBinarySensor : public Component, public binary_sensor::BinarySensor 
   LevoitBinarySensor(Levoit *parent) : parent_(parent) {}
   void set_up_bsensor(binary_sensor::BinarySensor* sensor) { up_bsensor_ = sensor; }
  protected:
-  Levoit *parent_;t
+  Levoit *parent_;
   binary_sensor::BinarySensor* up_bsensor_{nullptr};
 };
 
