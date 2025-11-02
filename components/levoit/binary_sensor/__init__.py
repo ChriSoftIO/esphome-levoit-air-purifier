@@ -21,4 +21,4 @@ async def to_code(config):
 
     if "out_of_water" in config:
         oow = await binary_sensor.new_binary_sensor(config["out_of_water"])
-        cg.add(var.set_button(oow))
+        cg.add(var.set_up_bsensor(oow))
