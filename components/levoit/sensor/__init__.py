@@ -10,8 +10,7 @@ from esphome.const import (
     DEVICE_CLASS_AQI,
     STATE_CLASS_MEASUREMENT,
     DEVICE_CLASS_HUMIDITY,
-    UNIT_PERCENT,
-    DEVICE_CLASS_WINDOW
+    UNIT_PERCENT
 )
 
 from .. import levoit_ns, CONF_LEVOIT_ID, Levoit
@@ -23,7 +22,7 @@ CODEOWNERS = ["@acvigue"]
 
 CONF_AIR_QUALITY = "air_quality"
 
-LevoitSensor = levoit_ns.class_("LevoitSensor", cg.Component, sensor.Sensor)
+LevoitSensor = levoit_ns.class_("LevoitSensor", cg.Component, sensor.Sensor, binary_sensor.BinarySensor)
 LevoitSensorPurpose = levoit_ns.enum("LevoitSensorPurpose")
 
 CONFIG_SCHEMA = (
