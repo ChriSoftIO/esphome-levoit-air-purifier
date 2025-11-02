@@ -112,6 +112,9 @@ class Levoit : public Component, public uart::UARTDevice {
   void set_status_poll_seconds(int interval);
   void register_state_listener(uint32_t changeMask, const std::function<void(uint32_t currentBits)> &func);
   void set_request_state(uint32_t onMask, uint32_t offMask, bool acquireMutex = true);
+  void set_button(binary_sensor::BinarySensor* button) {
+    this->button_ = button;
+  }
   uint32_t get_model_specific_payload_type(LevoitPayloadType type);
   uint32_t fanChangeMask =
     static_cast<uint32_t>(LevoitState::FAN_SPEED1) |
@@ -155,6 +158,7 @@ class Levoit : public Component, public uart::UARTDevice {
   bool validate_message_();
   void handle_payload_(LevoitPayloadType type, uint8_t *payload, size_t len);
   
+  binary_sensor::BinarySensor* button_{nullptr};
 };
 
 }  // namespace levoit
