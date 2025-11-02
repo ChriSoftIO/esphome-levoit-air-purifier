@@ -15,7 +15,7 @@ class LevoitSBinarySensor : public Component, public binary_sensor::BinarySensor
     this->button_ = button;
   }
  protected:
-  Levoit *parent_;
+  Levoit *parent_;t
 
   binary_sensor::BinarySensor* button_{nullptr};
 };
