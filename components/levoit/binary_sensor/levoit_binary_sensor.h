@@ -8,9 +8,9 @@ namespace esphome {
 namespace levoit {
 
 
-class LevoitSBinarySensor : public Component, public binary_sensor::BinarySensor {
+class LevoitBinarySensor : public Component, public binary_sensor::BinarySensor {
  public:
-  LevoitSBinarySensor(Levoit *parent) : parent_(parent) {}
+  LevoitBinarySensor(Levoit *parent) : parent_(parent) {}
   void set_button(binary_sensor::BinarySensor* button) {
     this->button_ = button;
   }
