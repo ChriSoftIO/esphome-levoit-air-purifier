@@ -47,9 +47,9 @@ async def to_code(config):
         var = await sensor.new_sensor(air_quality, parent, LevoitSensorPurpose.AIR_QUALITY)
         await cg.register_component(var, air_quality)
 
-    if humidity := config.get("humidity"):
-        var = await sensor.new_sensor(humidity, parent, LevoitSensorPurpose.HUMIDITY)
-        await cg.register_component(var, humidity)
+    #if humidity := config.get("humidity"):
+    #    var = await sensor.new_sensor(humidity, parent, LevoitSensorPurpose.HUMIDITY)
+    #    await cg.register_component(var, humidity)
 
     if out_of_water := config.get("out_of_water"):
         out_of_water = await binary_sensor.new_binary_sensor(out_of_water, parent)
