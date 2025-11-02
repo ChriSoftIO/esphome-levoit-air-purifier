@@ -1,6 +1,6 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import sensor, binary_sensor
+from esphome.components import sensor
 from esphome.const import (
     CONF_OUTPUT_ID,
     CONF_PM_2_5,
@@ -15,14 +15,12 @@ from esphome.const import (
 
 from .. import levoit_ns, CONF_LEVOIT_ID, Levoit
 
-AUTO_LOAD = [ "binary_sensor", "sensor" ]
-
 DEPENDENCIES = ["levoit"]
 CODEOWNERS = ["@acvigue"]
 
 CONF_AIR_QUALITY = "air_quality"
 
-LevoitSensor = levoit_ns.class_("LevoitSensor", cg.Component, sensor.Sensor, binary_sensor.BinarySensor)
+LevoitSensor = levoit_ns.class_("LevoitSensor", cg.Component, sensor.Sensor)
 LevoitSensorPurpose = levoit_ns.enum("LevoitSensorPurpose")
 
 CONFIG_SCHEMA = (
@@ -31,7 +29,6 @@ CONFIG_SCHEMA = (
         cv.Optional(CONF_PM_2_5): sensor.sensor_schema(LevoitSensor, unit_of_measurement=UNIT_MICROGRAMS_PER_CUBIC_METER, icon=ICON_BLUR, accuracy_decimals=1, device_class=DEVICE_CLASS_PM25, state_class=STATE_CLASS_MEASUREMENT),
         cv.Optional(CONF_AIR_QUALITY): sensor.sensor_schema(LevoitSensor, icon=ICON_BLUR, accuracy_decimals=0, device_class=DEVICE_CLASS_AQI, state_class=STATE_CLASS_MEASUREMENT),
         cv.Optional("humidity"): sensor.sensor_schema(LevoitSensor, unit_of_measurement=UNIT_PERCENT, accuracy_decimals=0, device_class=DEVICE_CLASS_HUMIDITY, state_class=STATE_CLASS_MEASUREMENT),
-        cv.Optional("out_of_water"): binary_sensor.binary_sensor_schema(LevoitSensor)
     })
 )
 
@@ -51,6 +48,3 @@ async def to_code(config):
         var = await sensor.new_sensor(humidity, parent, LevoitSensorPurpose.HUMIDITY)
         await cg.register_component(var, humidity)
 
-    if out_of_water := config.get("out_of_water"):
-        out_of_water = await binary_sensor.new_binary_sensor(out_of_water, parent)
-        await cg.register_component(var, out_of_water)
