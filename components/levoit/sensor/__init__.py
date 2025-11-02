@@ -33,6 +33,7 @@ CONFIG_SCHEMA = (
         cv.Optional("humidity"): sensor.sensor_schema(LevoitSensor, unit_of_measurement=UNIT_PERCENT, accuracy_decimals=0, device_class=DEVICE_CLASS_HUMIDITY, state_class=STATE_CLASS_MEASUREMENT),
         cv.Optional("out_of_water"): binary_sensor.binary_sensor_schema(LevoitSensor)
     })
+)
 
 
 async def to_code(config):
